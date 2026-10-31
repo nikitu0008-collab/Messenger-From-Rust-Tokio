@@ -4,10 +4,10 @@ mod HandleClient;
 mod HTML;
 mod URL_DECODE;
 
-async fn main() {
+fn main() {
     let html_lines: Vec<String> = HTML::getHTMLVector();
     
     let full_html: String = html_lines.join("\n");
 
-    println("HTML Code:\n{}", full_hmtl);
+    println!("HTML Code:\n{}", full_html);
 }
