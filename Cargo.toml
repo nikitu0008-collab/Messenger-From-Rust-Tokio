@@ -24,3 +24,6 @@ tracing-subscriber = "0.3"
 
 #Working static files(HTML/CSS/JS)
 tower-http = { version = "0.5", features = ["fs"] }
+
+#futures-util = "0.3"
+futures-util = "0.3"
