@@ -1,29 +1,11 @@
 [package]
-name = "chatCollegeRust"
+name = "messenger"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-#Async framework
-tokio = { version = "1.0", features = ["full"] }
-
-#Web framework
-axum = { version = "0.7", features = ["ws"]}
-
-# Data serialization and deserialization (JSON)
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-
-#Working with a database (using SQLite as an example)
-#If you need PostgreSQL, replace "sqlite" with "postgres"
-sqlx = { version = "0.8", features = [ "runtime-tokio", "sqlite", "macros" ] }
-
-#Logging utilities (to see queries in the console)
+tokio = { version = "1", features = ["full"] }
+axum = { version = "0.7", features = ["ws"] }
+futures-util = "0.3"
 tracing = "0.1"
 tracing-subscriber = "0.3"
-
-#Working static files(HTML/CSS/JS)
-tower-http = { version = "0.5", features = ["fs"] }
-
-#futures-util = "0.3"
-futures-util = "0.3"

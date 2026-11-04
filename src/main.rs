@@ -1,34 +1,22 @@
-mod buffer;
 mod chat_room;
 mod handle_client;
 mod html;
-mod url_decode;
 
 use axum::{
+    Router,
     extract::{State, WebSocketUpgrade},
     response::IntoResponse,
     routing::get,
-    Router,
 };
+use std::{net::SocketAddr, sync::Arc};
 
-use std::{
-    net::SocketAddr,
-    sync::Arc,
-};
-
-use tokio::sync::broadcast;
-
-pub struct AppState {
-    pub tx: broadcast::Sender<String>,
-}
+use chat_room::ChatRoom;
 
 #[tokio::main]
 async fn main() {
-    let (tx, _) = broadcast::channel::<String>(100);
+    tracing_subscriber::fmt::init();
 
-    let state = Arc::new(AppState {
-        tx,
-    });
+    let state = Arc::new(ChatRoom::new());
 
     let app = Router::new()
         .route("/", get(html::index_handler))
@@ -41,18 +29,15 @@ async fn main() {
         .await
         .expect("Failed to bind TCP listener");
 
-    println!("Server started at: http://{addr}");
+    println!("╔══════════════════════════════════════╗");
+    println!("║       Messenger Rust + Tokio         ║");
+    println!("╠══════════════════════════════════════╣");
+    println!("║ Server: http://{addr}       ║");
+    println!("╚══════════════════════════════════════╝");
 
-    axum::serve(listener, app)
-        .await
-        .expect("Server error");
+    axum::serve(listener, app).await.expect("Server error");
 }
 
-async fn ws_handler(
-    ws: WebSocketUpgrade,
-    State(state): State<Arc<AppState>>,
-) -> impl IntoResponse {
-    ws.on_upgrade(move |socket| {
-        handle_client::handle_socket(socket, state)
-    })
+async fn ws_handler(ws: WebSocketUpgrade, State(room): State<Arc<ChatRoom>>) -> impl IntoResponse {
+    ws.on_upgrade(move |socket| handle_client::handle_socket(socket, room))
 }
